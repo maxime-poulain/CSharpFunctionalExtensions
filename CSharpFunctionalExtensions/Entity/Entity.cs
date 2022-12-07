@@ -20,8 +20,10 @@
 
             if (ReferenceEquals(this, other))
                 return true;
-            
-            if (ValueObject.GetUnproxiedType(this) != ValueObject.GetUnproxiedType(other))
+
+            // When lazy-loading is enabled for EF or NHibernate, navigation properties at the runtime are derived to proxies.
+            // Unproxying the type is required as we could be comparing one proxy with the same id than a non proxy.
+            if (GetType().Unproxy() != other.GetType().Unproxy())
                 return false;
 
             if (IsTransient() || other.IsTransient())
@@ -53,7 +55,7 @@
 
         public override int GetHashCode()
         {
-            return (ValueObject.GetUnproxiedType(this).ToString() + Id).GetHashCode();
+            return (GetType().Unproxy().ToString() + Id).GetHashCode();
         }
     }
 

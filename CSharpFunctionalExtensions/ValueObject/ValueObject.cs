@@ -17,7 +17,7 @@ namespace CSharpFunctionalExtensions
             if (obj == null)
                 return false;
 
-            if (GetUnproxiedType(this) != GetUnproxiedType(obj))
+            if (GetType().Unproxy() != obj.GetType().Unproxy())
                 return false;
 
             var valueObject = (ValueObject)obj;
@@ -44,8 +44,8 @@ namespace CSharpFunctionalExtensions
 
         public virtual int CompareTo(object obj)
         {
-            Type thisType = GetUnproxiedType(this);
-            Type otherType = GetUnproxiedType(obj);
+            Type thisType = GetType().Unproxy();
+            Type otherType = obj.GetType().Unproxy();
 
             if (thisType != otherType)
                 return string.Compare(thisType.ToString(), otherType.ToString(), StringComparison.Ordinal);
@@ -101,20 +101,6 @@ namespace CSharpFunctionalExtensions
         public static bool operator !=(ValueObject a, ValueObject b)
         {
             return !(a == b);
-        }
-
-        internal static Type GetUnproxiedType(object obj)
-        {
-            const string EFCoreProxyPrefix = "Castle.Proxies.";
-            const string NHibernateProxyPostfix = "Proxy";
-
-            Type type = obj.GetType();
-            string typeString = type.ToString();
-
-            if (typeString.Contains(EFCoreProxyPrefix) || typeString.EndsWith(NHibernateProxyPostfix))
-                return type.BaseType;
-
-            return type;
         }
     }
 }

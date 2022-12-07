@@ -18,7 +18,7 @@ namespace CSharpFunctionalExtensions
             if (valueObject is null)
                 return false;
 
-            if (ValueObject.GetUnproxiedType(this) != ValueObject.GetUnproxiedType(obj))
+            if (GetType().Unproxy() != obj.GetType().Unproxy())
                 return false;
 
             return EqualsCore(valueObject);

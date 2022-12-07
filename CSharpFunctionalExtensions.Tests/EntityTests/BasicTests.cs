@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Castle.DynamicProxy;
 using FluentAssertions;
 using Xunit;
 
@@ -108,6 +109,33 @@ namespace CSharpFunctionalExtensions.Tests.EntityTests
             (entity1 == entity2).Should().BeFalse();
         }
 
+
+        [Fact]
+        public void Unproxying_the_type_of_a_non_proxied_object_returns_its_type()
+        {
+            var someEntity = new MyEntity(1);
+
+            var type = someEntity.GetType().Unproxy();
+
+            type.Should().Be(typeof(MyEntity));
+        }
+
+        [Fact]
+        public void Determining_equality_between_one_proxied_entity_and_a_non_proxied_entity_with_same_id_evaluates_to_true()
+        {
+            var someEntity = new MyEntityWithParameterlessConstructor(1);
+            var anotherProxiedEntity = new ProxyGenerator().CreateClassProxyWithTarget(someEntity);
+            someEntity.Should().BeEquivalentTo(anotherProxiedEntity);
+        }
+
+        [Fact]
+        public void Determining_equality_between_two_proxied_entities_with_same_id_evaluates_to_true()
+        {
+            var someEntity = new MyEntityWithParameterlessConstructor(1);
+            var anotherProxiedEntity = new ProxyGenerator().CreateClassProxyWithTarget(someEntity);
+            someEntity.Should().BeEquivalentTo(anotherProxiedEntity);
+        }
+
         public class MyEntityWithStringId : Entity<string>
         {
             public static MyEntityWithStringId Create()
@@ -136,6 +164,14 @@ namespace CSharpFunctionalExtensions.Tests.EntityTests
         {
             public MyDerivedEntity(long id)
                 : base(id)
+            {
+            }
+        }
+
+        public class MyEntityWithParameterlessConstructor : Entity
+        {
+            protected MyEntityWithParameterlessConstructor() {}
+            public MyEntityWithParameterlessConstructor(long id) : base(id)
             {
             }
         }

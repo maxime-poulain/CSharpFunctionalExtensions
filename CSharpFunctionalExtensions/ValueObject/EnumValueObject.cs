@@ -59,7 +59,7 @@ namespace CSharpFunctionalExtensions
             if (obj == null)
                 return false;
 
-            if (GetUnproxiedType(this) != GetUnproxiedType(obj))
+            if (GetType().Unproxy() != obj.GetType().Unproxy())
                 return false;
 
             var enumValueObject = (EnumValueObject<TEnumeration, TId>)obj;
@@ -188,7 +188,7 @@ namespace CSharpFunctionalExtensions
             if (obj == null)
                 return false;
 
-            if (GetUnproxiedType(this) != GetUnproxiedType(obj))
+            if (GetType().Unproxy() != obj.GetType().Unproxy())
                 return false;
 
             var enumValueObject = (EnumValueObject<TEnumeration>)obj;
